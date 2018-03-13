@@ -18,15 +18,21 @@ from os import listdir
 def classify0(inX, dataSet, labels, k):
     dataSetSize = dataSet.shape[0]
     diffMat = tile(inX, (dataSetSize,1)) - dataSet
+    print('diffmat: ', diffMat)
     sqDiffMat = diffMat**2
     sqDistances = sqDiffMat.sum(axis=1)
     distances = sqDistances**0.5
-    sortedDistIndicies = distances.argsort()     
+    print('distances: ', distances)
+    sortedDistIndicies = distances.argsort() # return array from xiao dao da de index
+    print('sortedDistIndicies: ', sortedDistIndicies)
     classCount={}          
     for i in range(k):
-        voteIlabel = labels[sortedDistIndicies[i]]
+        voteIlabel = labels[sortedDistIndicies[i]] # zhao qian k ge 
+        print('voteIlabel: ', voteIlabel)
         classCount[voteIlabel] = classCount.get(voteIlabel,0) + 1
+        print('classCount: ', classCount)
     sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True)
+    print('sortedClassCount: ', sortedClassCount)
     return sortedClassCount[0][0]
 
 def createDataSet():
@@ -48,14 +54,22 @@ def file2matrix(filename):
         classLabelVector.append(int(listFromLine[-1]))
         index += 1
     return returnMat,classLabelVector
-    
+
+# file2matrix by numpy loadfile
+# this is write by myself
+def myfile2matrix(filename):
+    datingData = loadtxt(filename)
+    datingDataMat = datingData[:,:3]
+    datingLabels = datingData[:,3:]
+    return datingDataMat, datingLabels
+
 def autoNorm(dataSet):
     minVals = dataSet.min(0)
     maxVals = dataSet.max(0)
     ranges = maxVals - minVals
     normDataSet = zeros(shape(dataSet))
     m = dataSet.shape[0]
-    normDataSet = dataSet - tile(minVals, (m,1))
+    normDataSet = dataSet - tile(minVals, (m,1)) # minVals in row cal m time , zai lie chong fu 1 ci
     normDataSet = normDataSet/tile(ranges, (m,1))   #element wise divide
     return normDataSet, ranges, minVals
    
@@ -90,7 +104,7 @@ def handwritingClassTest():
     for i in range(m):
         fileNameStr = trainingFileList[i]
         fileStr = fileNameStr.split('.')[0]     #take off .txt
-        classNumStr = int(fileStr.split('_')[0])
+        classNumStr = int(fileStr.split('_')[0])    
         hwLabels.append(classNumStr)
         trainingMat[i,:] = img2vector('trainingDigits/%s' % fileNameStr)
     testFileList = listdir('testDigits')        #iterate through the test set
