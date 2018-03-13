@@ -24,9 +24,11 @@ def calcShannonEnt(dataSet):
         if currentLabel not in labelCounts.keys(): labelCounts[currentLabel] = 0
         labelCounts[currentLabel] += 1
     shannonEnt = 0.0
+    print('labelCounts: ', labelCounts)
     for key in labelCounts:
         prob = float(labelCounts[key])/numEntries
         shannonEnt -= prob * log(prob,2) #log base 2
+        print("in {0} shannonEnt is {1}: ".format(key, shannonEnt))
     return shannonEnt
     
 def splitDataSet(dataSet, axis, value):
